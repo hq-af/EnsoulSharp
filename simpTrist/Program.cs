@@ -57,8 +57,6 @@ namespace simpTrist
                     string current = assembly.Version.ToString();
                     string live = match.Groups[1].ToString();
 
-                    Game.Print(match.Success ? "yes" : "no");
-
                     if (!current.Equals(live))
                     {
                         Game.Print($"<font color='#c63737'>simpTrist - new version available : <b>v{live}</b> !! UPDATE NEEDED !!</font>");
