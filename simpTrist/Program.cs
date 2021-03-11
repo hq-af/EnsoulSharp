@@ -144,7 +144,7 @@ namespace simpTrist
                 status.Draw();
             }
 
-            if (mainMenu.GetValue<MenuBool>("drawE").Enabled)
+            if (mainMenu.GetValue<MenuBool>("drawE").Enabled && mainMenu.GetValue<MenuKeyBind>("manualE").Active)
             {
                 Drawing.WorldToScreen(Player.Position, out Vector2 pos);
                 statusE.X = (int)pos.X;
