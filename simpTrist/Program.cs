@@ -100,7 +100,7 @@ namespace simpTrist
             mainMenu.Add(eSelector);
 
             mainMenu.Add(new MenuBool("useQCombo", "Use Q combo"));
-            mainMenu.Add(new MenuKeyBind("manualE", "Semi-Manual E", Keys.E, KeyBindType.Press));
+            mainMenu.Add(new MenuKeyBind("manualE", "Use E Combo", Keys.W, KeyBindType.Toggle));
             mainMenu.Add(new MenuKeyBind("manualR", "Semi-Manual R", Keys.R, KeyBindType.Press));
             mainMenu.Add(new MenuKeyBind("pushBack", "Push-back closest", Keys.T, KeyBindType.Press));
             mainMenu.Add(new MenuKeyBind("panicClear", "Panic-clear modifier", Keys.MButton, KeyBindType.Press));
@@ -109,6 +109,7 @@ namespace simpTrist
             draw.Add(new MenuBool("drawW", "W Range"));
             draw.Add(new MenuBool("drawWOE", "^ Only if ready", false));
             draw.Add(new MenuBool("drawPanic", "Panic-clear status"));
+            draw.Add(new MenuBool("drawE", "Combo E status"));
             draw.Add(new MenuSliderButton("drawTarget", "Draw target", 1500, 500, 2000, true));
 
             mainMenu.Add(draw);
@@ -122,6 +123,7 @@ namespace simpTrist
         private static Spell R => new Spell(SpellSlot.R, Player.AttackRange + 50);
 
         private static Text status = new Text("Panic-clear", default(Vector2), 14, SharpDX.Color.Red);
+        private static Text statusE = new Text("Use E Combo", default(Vector2), 14, SharpDX.Color.Yellow);
         private static void OnDraw(EventArgs args)
         {
             MenuSliderButton drawTarget = mainMenu.GetValue<MenuSliderButton>("drawTarget");
@@ -141,6 +143,14 @@ namespace simpTrist
                 status.Y = (int)mouse.Y - 20;
                 status.Draw();
             }
+
+            if (mainMenu.GetValue<MenuBool>("drawE").Enabled)
+            {
+                Drawing.WorldToScreen(Player.Position, out Vector2 pos);
+                statusE.X = (int)pos.X;
+                statusE.Y = (int)pos.Y + 20;
+                statusE.Draw();
+            }
         }
 
         private static void OnUpdate(EventArgs args)
@@ -150,7 +160,7 @@ namespace simpTrist
             else if (mainMenu.GetValue<MenuKeyBind>("manualE").Active) Manual(E);
 
 
-            if (Orbwalker.ActiveMode == OrbwalkerMode.Combo && Player.IsDashing()) EWhitelist();
+            if (Orbwalker.ActiveMode == OrbwalkerMode.Combo/* && Player.IsDashing()*/) EWhitelist();
             else if (Orbwalker.ActiveMode == OrbwalkerMode.LaneClear && mainMenu.GetValue<MenuKeyBind>("panicClear").Active) PanicClear();
         }
 
