@@ -157,10 +157,10 @@ namespace simpTrist
         {
             if (mainMenu.GetValue<MenuKeyBind>("pushBack").Active) PushBack();
             else if (mainMenu.GetValue<MenuKeyBind>("manualR").Active) Manual(R);
-            else if (mainMenu.GetValue<MenuKeyBind>("manualE").Active) Manual(E);
+            //else if (mainMenu.GetValue<MenuKeyBind>("manualE").Active) Manual(E);
 
 
-            if (Orbwalker.ActiveMode == OrbwalkerMode.Combo/* && Player.IsDashing()*/) EWhitelist();
+            if (Orbwalker.ActiveMode == OrbwalkerMode.Combo && mainMenu.GetValue<MenuKeyBind>("manualE").Active /* && Player.IsDashing()*/) EWhitelist();
             else if (Orbwalker.ActiveMode == OrbwalkerMode.LaneClear && mainMenu.GetValue<MenuKeyBind>("panicClear").Active) PanicClear();
         }
 
