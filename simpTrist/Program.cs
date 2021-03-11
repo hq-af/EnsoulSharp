@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using EnsoulSharp;
 using EnsoulSharp.SDK;
 using EnsoulSharp.SDK.MenuUI;
@@ -29,11 +33,49 @@ namespace simpTrist
             GameEvent.OnGameLoad += OnGameLoad;
         }
 
+
+        private static string liveVersion = "https://raw.githubusercontent.com/hq-af/EnsoulSharp/master/simpTrist/Properties/AssemblyInfo.cs?t=" + DateTimeOffset.Now.ToUnixTimeSeconds();
+        private static AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();
+
+        private static async void CheckVersion()
+        {
+            if (liveVersion.Equals(""))
+            {
+                Game.Print("live version uri not setup");
+                return;
+            }
+
+            using (HttpClient client = new HttpClient())
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                try
+                {
+                    string resp = await client.GetStringAsync(liveVersion);
+                    Match match = Regex.Match(resp, @"^\[assembly: AssemblyVersion\(""([0-9\.]+)""\)\]", RegexOptions.Multiline);
+
+                    string current = assembly.Version.ToString();
+                    string live = match.Groups[1].ToString();
+
+                    Game.Print(match.Success ? "yes" : "no");
+
+                    if (!current.Equals(live))
+                    {
+                        Game.Print($"<font color='#c63737'>simpTrist - new version available : <b>v{live}</b> !! UPDATE NEEDED !!</font>");
+                    }
+
+                }
+                catch (Exception e) { Game.Print($"version check failed : {e.Message}"); }
+            }
+        }
+
         private static void OnGameLoad()
         {
             if (Player.CharacterName != "Tristana") return;
 
             Game.Print("simpTrist by hq!af <github.com/hq-af> loaded.");
+
+            CheckVersion();
 
             GameEvent.OnGameTick += OnUpdate;
             Drawing.OnDraw += OnDraw;
